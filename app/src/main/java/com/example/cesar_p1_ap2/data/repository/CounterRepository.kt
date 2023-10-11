@@ -24,7 +24,8 @@ class CounterRepository @Inject constructor(
     val counter: Flow<Int> = context.dataStore.data.map { preferences ->
         preferences[PreferencesKeys.COUNTER] ?: 0
     }
-
+    //Iniciando el repo
+    //Empezando a realizar examen desde 0 tratando de hacer un push tengo problemas
     suspend fun increment() {
         context.dataStore.edit { preferences ->
             val currentCounterValue = preferences[PreferencesKeys.COUNTER] ?: 0
