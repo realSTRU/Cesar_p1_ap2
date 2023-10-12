@@ -1,5 +1,6 @@
 package com.example.cesar_p1_ap2
 
+import android.media.VolumeShaper.Operation
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,6 +14,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.cesar_p1_ap2.Nav.AppNavigation
+import com.example.cesar_p1_ap2.ui.Operations.OperationsScreen
 import com.example.cesar_p1_ap2.ui.theme.Cesar_p1_ap2Theme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -28,7 +31,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                   Greeting(name ="Cesar")
+                    AppNavigation(context = this)
                 }
             }
         }

@@ -1,22 +1,19 @@
 package com.example.cesar_p1_ap2.ui.Operations
-import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.ViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cesar_p1_ap2.data.local.entities.OperationEntity
 import com.example.cesar_p1_ap2.data.repository.OperationsRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
 @HiltViewModel
@@ -65,18 +62,18 @@ class OperationViewModel @Inject constructor(
 
         if(!dividendo.isNullOrBlank() && !divisor.isNullOrBlank() && !cociente.isNullOrBlank() )
         {
-            residuo = (dividendo.toFloat() - divisor.toFloat() * cociente.toFloat()).toString()
+            residuo = (dividendo.toInt() - divisor.toInt() * cociente.toInt()).toString()
         }
         if(!dividendo.isNullOrBlank() && !divisor.isNullOrBlank() && !residuo.isNullOrBlank())
         {
-            cociente = ((dividendo.toFloat() - residuo.toFloat()) / divisor.toFloat()).toString()
+            cociente = ((dividendo.toInt() - residuo.toInt()) / divisor.toInt()).toString()
         }
         if(!dividendo.isNullOrBlank() && !cociente.isNullOrBlank() && !residuo.isNullOrBlank())
         {
-            divisor = ((dividendo.toFloat() - residuo.toFloat()) / cociente.toFloat()).toString()
+            divisor = ((dividendo.toInt() - residuo.toInt()) / cociente.toInt()).toString()
         }
         if(!divisor.isNullOrBlank() && !cociente.isNullOrBlank() && !residuo.isNullOrBlank()){
-            dividendo = ((divisor.toFloat() * cociente.toFloat()) + residuo.toFloat()).toString()
+            dividendo = ((divisor.toInt() * cociente.toInt()) + residuo.toInt()).toString()
         }
 
     }
@@ -131,10 +128,10 @@ class OperationViewModel @Inject constructor(
         viewModelScope.launch {
             val operation = OperationEntity(
                 studentName = studentName,
-                dividendo = dividendo.toFloat(),
-                divisor = divisor.toFloat(),
-                cociente = cociente.toFloat(),
-                residuo = residuo.toFloat()
+                dividendo = dividendo.toInt(),
+                divisor = divisor.toInt(),
+                cociente = cociente.toInt(),
+                residuo = residuo.toInt()
             )
             operationRepository.save(operation)
             clean()

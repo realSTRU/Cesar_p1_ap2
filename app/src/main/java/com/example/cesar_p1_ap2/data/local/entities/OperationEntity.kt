@@ -9,8 +9,8 @@ data class OperationEntity (
     @PrimaryKey
     val operationId : Int? = null,
     val studentName : String = "",
-    val dividendo : Float? = null,
-    val divisor : Float? = null,
-    val cociente : Float? = null,
-    val residuo : Float? = null
+    val dividendo : Int? = null,
+    val divisor : Int? = null,
+    val cociente : Int? = null,
+    val residuo : Int? = null
 )

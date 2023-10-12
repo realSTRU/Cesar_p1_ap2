@@ -8,7 +8,7 @@ import com.example.cesar_p1_ap2.data.local.entities.OperationEntity
 
 @Database(
     entities = [OperationEntity::class],
-    version = 1
+    version = 2
 )
 abstract class OperationsDb : RoomDatabase()
 {
