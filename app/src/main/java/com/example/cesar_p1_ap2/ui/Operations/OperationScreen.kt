@@ -120,11 +120,11 @@ fun Form(
     val habilitarGuardar = camposLlenos
     var isKeyboardVisible by remember { mutableStateOf(false) }
     val rootView = LocalView.current
-    // Obtén el contexto y el controlador del teclado
+
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    // Calcula cuando el teclado se cierra
+
     DisposableEffect(isKeyboardVisible) {
         var hasExecuted = false
         val listener = ViewTreeObserver.OnPreDrawListener {
