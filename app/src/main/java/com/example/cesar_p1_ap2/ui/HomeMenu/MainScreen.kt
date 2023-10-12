@@ -58,7 +58,7 @@ fun MainScreen(
 )
 {
     Scaffold (
-        topBar = { TopAppBar(title = { Text(text = "SolveUrMathDivisions") },
+        topBar = { TopAppBar(title = { Text(text = "Aprende a dividir") },
             modifier = Modifier.shadow(8.dp),
             colors =TopAppBarDefaults.smallTopAppBarColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
         )

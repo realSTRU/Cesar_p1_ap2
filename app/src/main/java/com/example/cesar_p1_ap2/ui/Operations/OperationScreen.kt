@@ -213,13 +213,13 @@ fun Form(
                         imeAction = ImeAction.Next)
 
                 )
-                if(viewModel.dividendoError)
+                /*if(viewModel.dividendoError)
                 {
                     Text(text = "El dividendo es requerido.",
                         color = Color.Red,
                         fontSize = 10.sp,
                         modifier = Modifier.padding(start= 30.dp))
-                }
+                }*/
 
                 OutlinedTextField(
                     modifier = Modifier
@@ -240,13 +240,13 @@ fun Form(
                         imeAction = ImeAction.Next)
 
                 )
-                if(viewModel.divisorError)
+                /*if(viewModel.divisorError)
                 {
                     Text(text = "El divisor es requerido.",
                         color = Color.Red,
                         fontSize = 10.sp,
                         modifier = Modifier.padding(start= 30.dp))
-                }
+                }*/
                 OutlinedTextField(
                     modifier = Modifier
                         .padding(start = 10.dp, end = 10.dp),
