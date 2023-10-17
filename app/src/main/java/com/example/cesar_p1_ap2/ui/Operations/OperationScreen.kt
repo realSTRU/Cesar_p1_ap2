@@ -221,7 +221,6 @@ fun Form(
                                 Text(
                                     text = "Dividendo",
                                     fontSize = 11.sp,
-                                    color = Color.Red
                                 )
                             },
                             singleLine = true,
@@ -393,12 +392,9 @@ fun Form(
                                 {
                                     keyboardController?.hide()
                                     viewModel.setMessageShown()
-                                    showToast("Guardado sin errores")
                                 }
-                                else
-                                {
-                                    showToast("Errores al guardar")
-                                }
+                                showToast("Guardado sin errores")
+
 
                             }
                             else
