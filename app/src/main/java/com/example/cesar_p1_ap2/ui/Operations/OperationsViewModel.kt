@@ -57,61 +57,136 @@ class OperationViewModel @Inject constructor(
     {
         return this == 0f
     }
+    fun String.isInt(): Boolean{
+        try {
+            if (this.isEmpty()){
+                return false
+            }
+            val prueba = this.toInt()
+            return true
+        }
+        catch (e: Exception){
+            return false
+        }
+    }
+    fun String.isZero(): Boolean{
+        try {
+            return this.toInt() == 0
+        }
+        catch (e: Exception){
+            return false
+        }
+    }
     fun FillLastOne()
     {
+        if(!dividendo.isNullOrBlank() && !divisor.isNullOrBlank() && !cociente.isNullOrBlank() && !residuo.isNullOrBlank())
+        {
+            check()
+        }else
+        {
+            if(!dividendo.isNullOrBlank() && !divisor.isNullOrBlank() && !cociente.isNullOrBlank() )
+            {
+                residuo = (dividendo.toInt() - divisor.toInt() * cociente.toInt()).toString()
+            }
+            if(!dividendo.isNullOrBlank() && !divisor.isNullOrBlank() && !residuo.isNullOrBlank())
+            {
+                cociente = ((dividendo.toInt() - residuo.toInt()) / divisor.toInt()).toString()
+            }
+            if(!dividendo.isNullOrBlank() && !cociente.isNullOrBlank() && !residuo.isNullOrBlank())
+            {
+                divisor = ((dividendo.toInt() - residuo.toInt()) / cociente.toInt()).toString()
+            }
+            if(!divisor.isNullOrBlank() && !cociente.isNullOrBlank() && !residuo.isNullOrBlank()){
+                dividendo = ((divisor.toInt() * cociente.toInt()) + residuo.toInt()).toString()
+            }
+        }
 
-        if(!dividendo.isNullOrBlank() && !divisor.isNullOrBlank() && !cociente.isNullOrBlank() )
-        {
-            residuo = (dividendo.toInt() - divisor.toInt() * cociente.toInt()).toString()
-        }
-        if(!dividendo.isNullOrBlank() && !divisor.isNullOrBlank() && !residuo.isNullOrBlank())
-        {
-            cociente = ((dividendo.toInt() - residuo.toInt()) / divisor.toInt()).toString()
-        }
-        if(!dividendo.isNullOrBlank() && !cociente.isNullOrBlank() && !residuo.isNullOrBlank())
-        {
-            divisor = ((dividendo.toInt() - residuo.toInt()) / cociente.toInt()).toString()
-        }
-        if(!divisor.isNullOrBlank() && !cociente.isNullOrBlank() && !residuo.isNullOrBlank()){
-            dividendo = ((divisor.toInt() * cociente.toInt()) + residuo.toInt()).toString()
-        }
 
     }
     //
     fun OnDividendoChanged(value: String)
     {
-        //dividendo = value
-        dividendoError = dividendo.isNullOrBlank()
-        FillLastOne()
+        dividendo = value
+        check()
+
     }
 
     fun OnNameChanged(value: String)
     {
         studentName= value
-        studentNameError= studentName.isNullOrBlank()
+        studentNameError = studentName.isNullOrBlank()
+
 
     }
 
     fun OnDivisorChanged(value: String)
     {
-        //divisor= value
-        divisorError = divisor.isNullOrBlank()
-        FillLastOne()
+        divisor= value
+        check()
+
+
     }
 
     fun OnCocienteChanged(value: String)
     {
-        //cociente = value
-        cocienteError = cociente.isNullOrBlank()
-        FillLastOne()
+        cociente = value
+        check()
+
+
     }
 
     fun OnResiduoChanged(value: String)
     {
-        //residuo = value
-        residuoError = residuo.isNullOrBlank()
-        FillLastOne()
+        residuo = value
+        check()
+
     }
+
+
+    fun checkResiduo(){
+        if (!dividendo.isZero() && !divisor.isZero() && cociente.isInt() && residuo.isInt() && divisor.isInt() && dividendo.isInt()) {
+            residuoError = (residuo.toInt() != (dividendo.toInt() % divisor.toInt()))
+        }
+        else
+        {
+            residuoError=true
+        }
+    }
+    fun checkCociente(){
+        if (!dividendo.isZero() && !divisor.isZero() && cociente.isInt() && residuo.isInt() && divisor.isInt() && dividendo.isInt()){
+            cocienteError= (cociente.toInt() != (dividendo.toInt()/divisor.toInt()))
+        }
+        else
+        {
+            cocienteError=true
+        }
+    }
+    fun checkDivisor(){
+        if (dividendo.isInt() && divisor.isInt() && !cociente.isZero() && cociente.isInt() && residuo.isInt()) {
+            divisorError = (divisor.toInt() != ((dividendo.toInt() - residuo.toInt()) / cociente.toInt()))
+        }
+        else
+        {
+            divisorError=true
+        }
+    }
+    fun checkDividendo(){
+        if (dividendo.isInt() && !divisor.isZero() && !cociente.isZero() && divisor.isInt() && cociente.isInt()&& residuo.isInt()) {
+            dividendoError = (dividendo.toInt() != ((divisor.toInt() * cociente.toInt()) + residuo.toInt()))
+        }
+        else
+        {
+            dividendoError=true
+        }
+    }
+
+    fun check(){
+        checkResiduo()
+        checkDivisor()
+        checkCociente()
+        checkDividendo()
+    }
+
 
 
     fun clean()
@@ -123,19 +198,35 @@ class OperationViewModel @Inject constructor(
         residuo = ""
     }
 
-    fun saveOperation()
+    fun validateOperation() : Boolean
     {
+        return !studentNameError && !dividendoError && !divisorError && !cocienteError && !residuoError
+    }
+    fun saveOperation() : Boolean
+    {
+        var guardo : Boolean = false
         viewModelScope.launch {
-            val operation = OperationEntity(
-                studentName = studentName,
-                dividendo = dividendo.toInt(),
-                divisor = divisor.toInt(),
-                cociente = cociente.toInt(),
-                residuo = residuo.toInt()
-            )
-            operationRepository.save(operation)
-            clean()
+            if(validateOperation())
+            {
+                val operation = OperationEntity(
+                    studentName = studentName,
+                    dividendo = dividendo.toInt(),
+                    divisor = divisor.toInt(),
+                    cociente = cociente.toInt(),
+                    residuo = residuo.toInt()
+                )
+                operationRepository.save(operation)
+                clean()
+                guardo= true
+
+            }
+            else
+            {
+                guardo = false
+            }
+
         }
+        return guardo
     }
 
     fun deleteOperation(operation: OperationEntity)

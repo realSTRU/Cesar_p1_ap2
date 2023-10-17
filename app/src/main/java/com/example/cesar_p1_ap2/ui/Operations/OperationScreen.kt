@@ -3,6 +3,7 @@ package com.example.cesar_p1_ap2.ui.Operations
 
 
 import android.view.ViewTreeObserver
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Numbers
@@ -61,6 +63,11 @@ fun OperationsScreen(
     navController: NavController
 )
 {
+    var context = LocalContext.current
+
+    fun showToast(message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    }
     val operations by viewModel.operations.collectAsStateWithLifecycle()
     val snackbarHostState = remember {SnackbarHostState()}
 
@@ -116,6 +123,8 @@ fun Form(
     viewModel: OperationViewModel = hiltViewModel()
 )
 {
+
+
     val camposLlenos = !viewModel.dividendo.isNullOrBlank() && !viewModel.divisor.isNullOrBlank() && !viewModel.cociente.isNullOrBlank() && !viewModel.residuo.isNullOrBlank()
     val habilitarGuardar = camposLlenos
     var isKeyboardVisible by remember { mutableStateOf(false) }
@@ -124,6 +133,9 @@ fun Form(
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
+    fun showToast(message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    }
 
     DisposableEffect(isKeyboardVisible) {
         var hasExecuted = false
@@ -154,14 +166,14 @@ fun Form(
     Column (
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .padding(bottom = 10.dp)
+            .padding(bottom = 10.dp, top=60.dp)
     ){
         ElevatedCard(
             elevation = CardDefaults.cardElevation(
-                defaultElevation = 6.dp
+                defaultElevation = 8.dp
             )
             ,modifier = Modifier
-                .size(width = 350.dp, height = 500.dp),
+                .size(width = 350.dp, height = 315.dp),
 
             )
         {
@@ -194,52 +206,100 @@ fun Form(
                         fontSize = 10.sp,
                         modifier = Modifier.padding(start= 30.dp))
                 }
-                OutlinedTextField(
+                Row(
                     modifier = Modifier
-                        .padding(start = 10.dp, end = 10.dp),
-                    label = { Text(text ="Dividendo") },
-                    singleLine = true,
-                    maxLines = 1,
-                    value = viewModel.dividendo,
-                    onValueChange = {viewModel.dividendo = it},
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Filled.Numbers,
-                            contentDescription = "Dividendo"
-                        )
-                    },
-                    isError = viewModel.dividendoError,
-                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Next)
-
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 )
-                /*if(viewModel.dividendoError)
                 {
-                    Text(text = "El dividendo es requerido.",
-                        color = Color.Red,
-                        fontSize = 10.sp,
-                        modifier = Modifier.padding(start= 30.dp))
-                }*/
+                    Column {
+                        OutlinedTextField(
+                            modifier = Modifier
+                                .padding(start = 5.dp)
+                                .width(145.dp),
+                            label = {
+                                Text(
+                                    text = "Dividendo",
+                                    fontSize = 11.sp,
+                                    color = Color.Red
+                                )
+                            },
+                            singleLine = true,
+                            maxLines = 1,
+                            value = viewModel.dividendo,
+                            onValueChange = { viewModel.OnDividendoChanged(it) },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Filled.Numbers,
+                                    contentDescription = "Dividendo"
+                                )
+                            },
+                            isError = viewModel.dividendoError,
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                keyboardType = KeyboardType.Number,
+                                imeAction = ImeAction.Next
+                            )
 
-                OutlinedTextField(
-                    modifier = Modifier
-                        .padding(start = 10.dp, end = 10.dp),
-                    label = { Text(text = "Divisor") },
-                    singleLine = true,
-                    maxLines = 1,
-                    value = viewModel.divisor,
-                    onValueChange = {viewModel.divisor = it},
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Filled.Numbers,
-                            contentDescription = "Divisor"
                         )
-                    },
-                    isError = viewModel.divisorError,
-                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Next)
+                        if (viewModel.dividendo.isBlank()) {
+                            Text(text = "Dividendo es Requerido",
+                                fontSize = 8.sp,
+                                color = Color.Red)
+                        }
+                        if (viewModel.dividendoError) {
+                            Text(text = "Dividendo es Incorrecto",
+                                fontSize = 8.sp,
+                                color = Color.Red)
+                        }
+                    }
+                    /*if(viewModel.dividendoError)
+                    {
+                        Text(text = "El dividendo es requerido.",
+                            color = Color.Red,
+                            fontSize = 10.sp,
+                            modifier = Modifier.padding(start= 30.dp))
+                    }*/
 
-                )
+                    Column {
+                        OutlinedTextField(
+                            modifier = Modifier
+                                .padding(end = 5.dp, start = 10.dp)
+                                .width(145.dp),
+                            label = {
+                                Text(
+                                    text = "Divisor",
+                                    fontSize = 12.sp
+                                )
+                            },
+                            singleLine = true,
+                            maxLines = 1,
+                            value = viewModel.divisor,
+                            onValueChange = { viewModel.OnDivisorChanged(it) },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Filled.Numbers,
+                                    contentDescription = "Divisor"
+                                )
+                            },
+                            isError = viewModel.divisorError,
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                keyboardType = KeyboardType.Number,
+                                imeAction = ImeAction.Next
+                            )
+
+                        )
+                        if (viewModel.dividendo == "0") {
+                            Text(text = "error division entre 0",
+                                fontSize = 8.sp,
+                                color = Color.Red)
+                        }
+                        if (viewModel.dividendoError) {
+                            Text(text = "Divisor incorrecto",
+                                fontSize = 8.sp,
+                                color = Color.Red)
+                        }
+                    }
+                }
                 /*if(viewModel.divisorError)
                 {
                     Text(text = "El divisor es requerido.",
@@ -247,46 +307,77 @@ fun Form(
                         fontSize = 10.sp,
                         modifier = Modifier.padding(start= 30.dp))
                 }*/
-                OutlinedTextField(
+                Row (
                     modifier = Modifier
-                        .padding(start = 10.dp, end = 10.dp),
-                    label = { Text(text = "Cociente") },
-                    singleLine = true,
-                    maxLines = 1,
-                    value = viewModel.cociente,
-                    onValueChange = {viewModel.cociente = it},
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Filled.Numbers,
-                            contentDescription = "Cociente"
-                        )
-                    },
-                    isError = viewModel.cocienteError,
-                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Next)
-
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 )
+                {
+                    Column {
+                        OutlinedTextField(
+                            modifier = Modifier
+                                .width(145.dp)
+                                .padding(start = 5.dp),
+                            label = { Text(text = "Cociente",
+                                fontSize = 12.sp) },
+                            singleLine = true,
+                            maxLines = 1,
+                            value = viewModel.cociente,
+                            onValueChange = { viewModel.OnCocienteChanged(it) },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Filled.Numbers,
+                                    contentDescription = "Cociente"
+                                )
+                            },
+                            isError = viewModel.cocienteError,
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                keyboardType = KeyboardType.Number,
+                                imeAction = ImeAction.Next
+                            )
 
-                OutlinedTextField(
-                    modifier = Modifier
-                        .padding(start = 10.dp, bottom = 10.dp, end = 10.dp),
-                    label = { Text(text ="Residuo") },
-                    singleLine = true,
-                    maxLines = 1,
-                    value = viewModel.residuo,
-                    onValueChange = {viewModel.residuo = it},
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Filled.Numbers,
-                            contentDescription ="Residuo"
                         )
-                    },
-                    isError = viewModel.residuoError,
-                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Next)
+                        if(viewModel.cocienteError)
+                        {
+                            Text("cociente incorrecto",
+                                fontSize = 8.sp,
+                                color = Color.Red)
+                        }
+                    }
 
-                )
+                    Column {
+                        OutlinedTextField(
+                            modifier = Modifier
+                                .width(145.dp)
+                                .padding(end = 5.dp),
+                            label = { Text(text = "Residuo",
+                                fontSize = 12.sp) },
+                            singleLine = true,
+                            maxLines = 1,
+                            value = viewModel.residuo,
+                            onValueChange = { viewModel.OnResiduoChanged(it)},
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Filled.Numbers,
+                                    contentDescription = "Residuo"
+                                )
+                            },
+                            isError = viewModel.residuoError,
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                keyboardType = KeyboardType.Number,
+                                imeAction = ImeAction.Next
+                            )
 
+                        )
+                        if(viewModel.residuoError)
+                        {
+                            Text("residuo incorrecto",
+                                fontSize = 8.sp,
+                                color = Color.Red)
+                        }
+                    }
+
+                }
                 Row (
                     horizontalArrangement =Arrangement.End, modifier = Modifier
                         .padding(15.dp)
@@ -297,9 +388,22 @@ fun Form(
                             .clickable(enabled = habilitarGuardar){}
                         , onClick = {
                             if (camposLlenos) {
-                                keyboardController?.hide()
-                                viewModel.saveOperation()
-                                viewModel.setMessageShown()
+
+                                if(viewModel.saveOperation())
+                                {
+                                    keyboardController?.hide()
+                                    viewModel.setMessageShown()
+                                    showToast("Guardado sin errores")
+                                }
+                                else
+                                {
+                                    showToast("Errores al guardar")
+                                }
+
+                            }
+                            else
+                            {
+                                showToast("Errores al guardar")
                             }
                         },){
                         Icon(imageVector = Icons.Default.SaveAs, contentDescription = "Add")

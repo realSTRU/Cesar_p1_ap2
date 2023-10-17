@@ -2,6 +2,7 @@ package com.example.cesar_p1_ap2.ui.Operations
 
 import android.annotation.SuppressLint
 import android.graphics.drawable.Icon
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,6 +34,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBar
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
 
@@ -45,7 +47,11 @@ fun OperationsConsult(
 )
 {
     val operations by viewModel.operations.collectAsStateWithLifecycle()
+    var context = LocalContext.current
 
+    fun showToast(message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    }
 
     Scaffold(
         topBar = {
@@ -100,7 +106,8 @@ fun OperationsConsult(
                                     )
                                 }
                                 IconButton(
-                                    onClick = { viewModel.deleteOperation(operation) }
+                                    onClick = { viewModel.deleteOperation(operation)
+                                    showToast("Eliminado correctamente ${operation.studentName}")}
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.Delete,
