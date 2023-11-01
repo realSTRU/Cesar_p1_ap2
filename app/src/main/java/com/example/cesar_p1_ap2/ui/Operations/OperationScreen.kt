@@ -4,6 +4,7 @@ package com.example.cesar_p1_ap2.ui.Operations
 
 import android.view.ViewTreeObserver
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,6 +22,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Numbers
 import androidx.compose.material.icons.filled.Person
@@ -28,11 +30,13 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.SaveAs
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -63,6 +67,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.example.cesar_p1_ap2.data.local.entities.OperationEntity
 import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
@@ -183,7 +188,8 @@ fun Form(
                 defaultElevation = 8.dp
             )
             ,modifier = Modifier
-                .size(width = 350.dp, height = 315.dp),
+                .size(width = 350.dp, height = 315.dp)
+                .padding(bottom = 5.dp),
 
             )
         {
@@ -387,106 +393,120 @@ fun Form(
                     }
 
                 }
-                Row (
-                    horizontalArrangement =Arrangement.End, modifier = Modifier
-                        .padding(15.dp)
-                        .fillMaxWidth())
-                {
-                    FloatingActionButton(
+
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier =  Modifier
+                        .fillMaxWidth()
+
+                ) {
+                    OutlinedButton(
                         modifier = Modifier
-                            .clickable(enabled = habilitarGuardar){}
-                        , onClick = {
+                            .clickable(enabled = habilitarGuardar) {}
+                            .padding(top = 10.dp),
+                        onClick = {
                             if (camposLlenos) {
 
-                                if(viewModel.saveOperation())
-                                {
+                                if (viewModel.saveOperation()) {
                                     keyboardController?.hide()
                                     viewModel.setMessageShown()
                                     showToast("Guardado sin errores")
                                 }
 
 
-
-                            }
-                            else
-                            {
+                            } else {
                                 showToast("Errores al guardar")
                             }
-                        },){
+                        },
+                    ) {
+                        Text(text = "Guardar")
                         Icon(imageVector = Icons.Default.SaveAs, contentDescription = "Add")
                     }
                 }
+                }
 
 
-            }
 
+
+        }
+        Row()
+        {
+            Text(text = "Historial de operaciones.")
+            Icon(imageVector = Icons.Default.AccessTime, contentDescription = "Add")
         }
         Divider()
-        Text(text = "Historial de operaciones.")
-        val operations by viewModel.operations.collectAsStateWithLifecycle()
-        Column() {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 30.dp)
-            ) {
-                items(operations) { operation ->
-                    Surface(
+        HistorialConsult(operations = operations, viewModel =  viewModel)
+        
+
+    }
+}
+
+@Composable
+fun HistorialConsult(
+    operations : List<OperationEntity>,
+    viewModel: OperationViewModel = hiltViewModel())
+{
+    Column() {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 10.dp)
+        ) {
+            items(operations) { operation ->
+                Surface(
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .fillMaxWidth(),
+                    color = Color.DarkGray,
+                    shadowElevation = 3.dp,
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Row(
                         modifier = Modifier
-                            .padding(10.dp)
-                            .fillMaxWidth(),
-                        color = Color.DarkGray,
-                        shadowElevation = 3.dp,
-                        shape = RoundedCornerShape(8.dp)
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
+                        Column {
+                            Text(
+                                text = "Nombre: ${operation.studentName}",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = "Dividendo: ${operation.dividendo}",
+                                fontSize = 14.sp
+                            )
+                            Text(
+                                text = "Divisor: ${operation.divisor}",
+                                fontSize = 14.sp
+                            )
+                            Text(
+                                text = "Cociente: ${operation.cociente}",
+                                fontSize = 14.sp
+                            )
+                            Text(
+                                text = "Residuo: ${operation.residuo}",
+                                fontSize = 14.sp
+                            )
+                        }
+                        IconButton(
+                            onClick = {
+                                viewModel.deleteOperation(operation)
+                                //showToast("Eliminado correctamente ${operation.studentName}")
+                            }
                         ) {
-                            Column {
-                                Text(
-                                    text = "Nombre: ${operation.studentName}",
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Text(
-                                    text = "Dividendo: ${operation.dividendo}",
-                                    fontSize = 14.sp
-                                )
-                                Text(
-                                    text = "Divisor: ${operation.divisor}",
-                                    fontSize = 14.sp
-                                )
-                                Text(
-                                    text = "Cociente: ${operation.cociente}",
-                                    fontSize = 14.sp
-                                )
-                                Text(
-                                    text = "Residuo: ${operation.residuo}",
-                                    fontSize = 14.sp
-                                )
-                            }
-                            IconButton(
-                                onClick = {
-                                    viewModel.deleteOperation(operation)
-                                    showToast("Eliminado correctamente ${operation.studentName}")
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Delete,
-                                    contentDescription = null,
-                                    tint = Color.Red // Puedes cambiar el color del ícono según tu preferencia
-                                )
-                            }
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = null,
+                                tint = Color.Red // Puedes cambiar el color del ícono según tu preferencia
+                            )
                         }
                     }
-                    Divider()
                 }
+                Divider()
             }
         }
-
     }
 }
