@@ -8,19 +8,26 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Numbers
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.SaveAs
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -31,6 +38,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -47,6 +55,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -63,6 +72,7 @@ fun OperationsScreen(
     navController: NavController
 )
 {
+
     var context = LocalContext.current
 
     fun showToast(message: String) {
@@ -124,7 +134,7 @@ fun Form(
 )
 {
 
-
+    val operations by viewModel.operations.collectAsStateWithLifecycle()
     val camposLlenos = !viewModel.dividendo.isNullOrBlank() && !viewModel.divisor.isNullOrBlank() && !viewModel.cociente.isNullOrBlank() && !viewModel.residuo.isNullOrBlank()
     val habilitarGuardar = camposLlenos
     var isKeyboardVisible by remember { mutableStateOf(false) }
@@ -166,7 +176,7 @@ fun Form(
     Column (
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .padding(bottom = 10.dp, top=60.dp)
+            .padding(bottom = 10.dp, top=20.dp)
     ){
         ElevatedCard(
             elevation = CardDefaults.cardElevation(
@@ -392,8 +402,9 @@ fun Form(
                                 {
                                     keyboardController?.hide()
                                     viewModel.setMessageShown()
+                                    showToast("Guardado sin errores")
                                 }
-                                showToast("Guardado sin errores")
+
 
 
                             }
@@ -409,6 +420,72 @@ fun Form(
 
             }
 
+        }
+        Divider()
+        Text(text = "Historial de operaciones.")
+        val operations by viewModel.operations.collectAsStateWithLifecycle()
+        Column() {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 30.dp)
+            ) {
+                items(operations) { operation ->
+                    Surface(
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .fillMaxWidth(),
+                        color = Color.DarkGray,
+                        shadowElevation = 3.dp,
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Column {
+                                Text(
+                                    text = "Nombre: ${operation.studentName}",
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Text(
+                                    text = "Dividendo: ${operation.dividendo}",
+                                    fontSize = 14.sp
+                                )
+                                Text(
+                                    text = "Divisor: ${operation.divisor}",
+                                    fontSize = 14.sp
+                                )
+                                Text(
+                                    text = "Cociente: ${operation.cociente}",
+                                    fontSize = 14.sp
+                                )
+                                Text(
+                                    text = "Residuo: ${operation.residuo}",
+                                    fontSize = 14.sp
+                                )
+                            }
+                            IconButton(
+                                onClick = {
+                                    viewModel.deleteOperation(operation)
+                                    showToast("Eliminado correctamente ${operation.studentName}")
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = null,
+                                    tint = Color.Red // Puedes cambiar el color del ícono según tu preferencia
+                                )
+                            }
+                        }
+                    }
+                    Divider()
+                }
+            }
         }
 
     }
