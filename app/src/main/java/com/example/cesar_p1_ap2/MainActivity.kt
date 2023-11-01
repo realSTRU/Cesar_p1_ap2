@@ -19,7 +19,7 @@ import com.example.cesar_p1_ap2.ui.Operations.OperationsScreen
 import com.example.cesar_p1_ap2.ui.theme.Cesar_p1_ap2Theme
 import dagger.hilt.android.AndroidEntryPoint
 
-
+//esta es la ui vieja
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
